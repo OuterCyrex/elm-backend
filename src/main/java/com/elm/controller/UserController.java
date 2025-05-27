@@ -1,4 +1,4 @@
-package com.elm.controller.user;
+package com.elm.controller;
 
 import com.elm.model.dto.user.GetUserRequest;
 import com.elm.model.dto.user.SaveUserRequest;

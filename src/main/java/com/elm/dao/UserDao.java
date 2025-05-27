@@ -41,23 +41,23 @@ public class UserDao {
         StringBuilder sql = new StringBuilder("SELECT * FROM user WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
-        if (user.getUserId() != null) {
+        if (user.getUserId() != null && !user.getUserId().isEmpty()) {
             sql.append(" AND userId = ?");
             params.add(user.getUserId());
         }
-        if (user.getPassword() != null) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             sql.append(" AND password = ?");
             params.add(user.getPassword());
         }
-        if (user.getUserName() != null) {
+        if (user.getUserName() != null && !user.getUserName().isEmpty()) {
             sql.append(" AND userName = ?");
             params.add(user.getUserName());
         }
-        if (user.getUserSex() != 0) {
+        if (user.getUserSex() != null) {
             sql.append(" AND userSex = ?");
             params.add(user.getUserSex());
         }
-        if (user.getUserImg() != null) {
+        if (user.getUserImg() != null && !user.getUserImg().isEmpty()) {
             sql.append(" AND userImg = ?");
             params.add(user.getUserImg());
         }
@@ -79,8 +79,8 @@ public class UserDao {
                             rs.getString("password"),
                             rs.getString("userName"),
                             rs.getString("userImg"),
-                            rs.getShort("userSex"),
-                            rs.getShort("delTag")
+                            rs.getInt("userSex"),
+                            rs.getInt("delTag")
                     );
                     userList.add(u);
                 }
