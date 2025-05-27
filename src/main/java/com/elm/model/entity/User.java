@@ -1,4 +1,4 @@
-package com.elm.model;
+package com.elm.model.entity;
 
 public class User {
     private String userId;
@@ -7,6 +7,15 @@ public class User {
     private short userSex;
     private String userImg;
     private short delTag;
+
+    public User(String userId, String password, String userName, String userImg, short userSex, short delTag) {
+        this.userId = userId;
+        this.password = password;
+        this.userName = userName;
+        this.userImg = userImg;
+        this.userSex = userSex;
+        this.delTag = delTag;
+    }
 
     public String getUserId() {
         return userId;
