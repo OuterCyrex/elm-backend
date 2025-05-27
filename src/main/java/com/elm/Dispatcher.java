@@ -1,6 +1,7 @@
 package com.elm;
 
 import com.elm.controller.HelloController;
+import com.elm.controller.business.BusinessController;
 import com.elm.controller.user.UserController;
 
 import javax.servlet.*;
@@ -24,6 +25,10 @@ public class Dispatcher extends HttpServlet {
 
         if (action.startsWith("/UserController")) {
             new UserController().handle(action, req, resp);
+        }
+
+        if (action.startsWith("/BusinessController")) {
+            new BusinessController().handle(action, req, resp);
         }
     }
 }

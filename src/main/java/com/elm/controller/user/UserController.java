@@ -1,8 +1,8 @@
 package com.elm.controller.user;
 
-import com.elm.model.dto.GetUserRequest;
-import com.elm.model.dto.SaveUserRequest;
-import com.elm.model.dto.UserLoginRequest;
+import com.elm.model.dto.user.GetUserRequest;
+import com.elm.model.dto.user.SaveUserRequest;
+import com.elm.model.dto.user.UserLoginRequest;
 import com.elm.model.vo.UserResponse;
 import com.elm.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,25 +17,29 @@ public class UserController {
 
 
     public void handle(String route, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        switch (route) {
-            case "/UserController/test":
-                this.Test(req, resp);
-            case "/UserController/saveUser":
-                this.saveUser(req, resp);
-            case "/UserController/getUserById":
-                this.getUserById(req, resp);
-            case "/UserController/getUserByIdByPass":
-                this.getUserByIdByPass(req, resp);
+        try {
+            switch (route) {
+                case "/UserController/test":
+                    this.Test(req, resp);
+                case "/UserController/saveUser":
+                    this.saveUser(req, resp);
+                case "/UserController/getUserById":
+                    this.getUserById(req, resp);
+                case "/UserController/getUserByIdByPass":
+                    this.getUserByIdByPass(req, resp);
+            }
+        } catch (Exception e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
         }
     }
 
-    private void Test(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void Test(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/plain;charset=UTF-8");
         resp.getWriter().write("UserController");
     }
 
-    private void saveUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void saveUser(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/plain;charset=UTF-8");
         String userId = req.getParameter("userId");
@@ -50,7 +54,7 @@ public class UserController {
         resp.getWriter().write(String.valueOf(result));
     }
 
-    private void getUserById(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void getUserById(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setCharacterEncoding("UTF-8");
         String userId = req.getParameter("userId");
         resp.setContentType("text/plain;charset=UTF-8");
@@ -60,8 +64,9 @@ public class UserController {
         resp.getWriter().write(String.valueOf(id));
     }
 
-    public void getUserByIdByPass(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void getUserByIdByPass(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/plain;charset=UTF-8");
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
 

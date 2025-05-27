@@ -1,4 +1,4 @@
-package com.elm.model.dto;
+package com.elm.model.dto.user;
 
 public class UserLoginRequest {
     private String userId;

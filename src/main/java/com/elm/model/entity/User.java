@@ -4,11 +4,13 @@ public class User {
     private String userId;
     private String password;
     private String userName;
-    private short userSex;
+    private Integer userSex;
     private String userImg;
-    private short delTag;
+    private Integer delTag;
 
-    public User(String userId, String password, String userName, String userImg, short userSex, short delTag) {
+    public User() {}
+
+    public User(String userId, String password, String userName, String userImg, int userSex, int delTag) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;
@@ -41,11 +43,11 @@ public class User {
         this.userName = userName;
     }
 
-    public short getUserSex() {
+    public Integer getUserSex() {
         return userSex;
     }
 
-    public void setUserSex(short userSex) {
+    public void setUserSex(int userSex) {
         this.userSex = userSex;
     }
 
@@ -57,11 +59,11 @@ public class User {
         this.userImg = userImg;
     }
 
-    public short getDelTag() {
+    public Integer getDelTag() {
         return delTag;
     }
 
-    public void setDelTag(short delTag) {
+    public void setDelTag(int delTag) {
         this.delTag = delTag;
     }
 }

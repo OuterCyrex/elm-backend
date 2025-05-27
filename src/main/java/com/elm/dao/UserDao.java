@@ -25,9 +25,9 @@ public class UserDao {
         pstmt.setString(1, user.getUserId());
         pstmt.setString(2, user.getPassword());
         pstmt.setString(3, user.getUserName());
-        pstmt.setShort(4, user.getUserSex());
+        pstmt.setInt(4, user.getUserSex());
         pstmt.setString(5, user.getUserImg());
-        pstmt.setShort(6, user.getDelTag());
+        pstmt.setInt(6, user.getDelTag());
 
         int rowsAffected = pstmt.executeUpdate();
         conn.close();
@@ -35,51 +35,9 @@ public class UserDao {
         return rowsAffected;
     }
 
-    public int UserExists(User user) throws SQLException {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM user WHERE 1=1");
-        List<Object> params = new ArrayList<>();
+    public List<User> findUser(User user) throws SQLException {
+        List<User> userList = new ArrayList<>();
 
-        if (user.getUserId() != null) {
-            sql.append(" AND userId = ?");
-            params.add(user.getUserId());
-        }
-        if (user.getPassword() != null) {
-            sql.append(" AND password = ?");
-            params.add(user.getPassword());
-        }
-        if (user.getUserName() != null) {
-            sql.append(" AND userName = ?");
-            params.add(user.getUserName());
-        }
-        if (user.getUserSex() != 0) {
-            sql.append(" AND userSex = ?");
-            params.add(user.getUserSex());
-        }
-        if (user.getUserImg() != null) {
-            sql.append(" AND userImg = ?");
-            params.add(user.getUserImg());
-        }
-
-        sql.append(" AND delTag = 0");
-
-        try (
-                Connection conn = DBUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql.toString())
-        ) {
-            for (int i = 0; i < params.size(); i++) {
-                pstmt.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        }
-
-        return 0;
-    }
-
-    public User findUser(User user) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM user WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
@@ -114,19 +72,21 @@ public class UserDao {
                 pstmt.setObject(i + 1, params.get(i));
             }
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return new User(
-                        rs.getString("userId"),
-                        rs.getString("password"),
-                        rs.getString("userName"),
-                        rs.getString("userImg"),
-                        rs.getShort("userSex"),
-                        (short) 0
-                );
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User(
+                            rs.getString("userId"),
+                            rs.getString("password"),
+                            rs.getString("userName"),
+                            rs.getString("userImg"),
+                            rs.getShort("userSex"),
+                            rs.getShort("delTag")
+                    );
+                    userList.add(u);
+                }
             }
         }
 
-        return null;
+        return userList;
     }
 }
