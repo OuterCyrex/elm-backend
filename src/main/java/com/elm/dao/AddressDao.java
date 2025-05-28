@@ -10,19 +10,18 @@ import com.elm.model.entity.Address;
 public class AddressDao {
 
     public int addAddress(Address da) throws SQLException {
-        String sql = "INSERT INTO deliveryaddress (daId, contactName, contactSex, contactTel, address, userId) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO deliveryaddress (contactName, contactSex, contactTel, address, userId) " +
+                     "VALUES (?, ?, ?, ?, ?)";
 
         try (
             Connection conn = DBUtil.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)
         ) {
-            pstmt.setInt(1, da.getDaId());
-            pstmt.setString(2, da.getContactName());
-            pstmt.setInt(3, da.getContactSex());
-            pstmt.setString(4, da.getContactTel());
-            pstmt.setString(5, da.getAddress());
-            pstmt.setString(6, da.getUserId());
+            pstmt.setString(1, da.getContactName());
+            pstmt.setInt(2, da.getContactSex());
+            pstmt.setString(3, da.getContactTel());
+            pstmt.setString(4, da.getAddress());
+            pstmt.setString(5, da.getUserId());
 
             return pstmt.executeUpdate();
         }

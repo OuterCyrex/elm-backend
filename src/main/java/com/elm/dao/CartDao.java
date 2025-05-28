@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.elm.model.entity.Cart;
+import com.elm.model.entity.Food;
 import com.elm.utils.DBUtil;
 
 public class CartDao {
@@ -13,15 +14,14 @@ public class CartDao {
      * 添加购物车记录
      */
     public int addCart(Cart cart) throws SQLException {
-        String sql = "INSERT INTO cart (cartId, foodId, businessId, userId, quantity) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cart (foodId, businessId, userId, quantity) VALUES (?, ?, ?, ?)";
         Connection conn = DBUtil.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
-        pstmt.setInt(1, cart.getCartId());
-        pstmt.setInt(2, cart.getFoodId());
-        pstmt.setInt(3, cart.getBusinessId());
-        pstmt.setString(4, cart.getUserId());
-        pstmt.setInt(5, cart.getQuantity());
+        pstmt.setInt(1, cart.getFoodId());
+        pstmt.setInt(2, cart.getBusinessId());
+        pstmt.setString(3, cart.getUserId());
+        pstmt.setInt(4, cart.getQuantity());
 
         int rowsAffected = pstmt.executeUpdate();
 
@@ -76,6 +76,12 @@ public class CartDao {
                     c.setUserId(rs.getString("userId"));
                     c.setQuantity(rs.getInt("quantity"));
                     cartList.add(c);
+
+                    Food cr = new Food();
+                    cr.setFoodId(rs.getInt("foodId"));
+                    Food food = new FoodDao().FindFood(cr).get(0);
+
+                    c.setFood(food);
                 }
             }
         }

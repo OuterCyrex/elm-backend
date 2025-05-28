@@ -36,6 +36,14 @@ public class Dispatcher extends HttpServlet {
         if (action.startsWith("/OrdersController")) {
             new OrderController().handle(action, req, resp);
         }
+
+        if (action.startsWith("/CartController")) {
+            new CartController().handle(action, req, resp);
+        }
+
+        if (action.startsWith("/DeliveryAddressController")) {
+            new AddressController().handle(action, req, resp);
+        }
     }
 }
 

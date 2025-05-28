@@ -18,9 +18,13 @@ public class CartController {
                 case "/CartController/saveCart":
                     this.saveCart(req, resp);
                     break;
+                case "/CartController/listCart":
+                    this.FindCart(req, resp);
+                    break;
             }
         } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -36,6 +40,15 @@ public class CartController {
         int rows = cartService.addCart(c);
 
         resp.getWriter().write(String.valueOf(rows));
+        resp.getWriter().flush();
+        resp.getWriter().close();
+    }
+
+    public void FindCart(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/plain;charset=UTF-8");
+
+        resp.getWriter().write(mapper.writeValueAsString(cartService.CartList(req.getParameter("userId"))));
         resp.getWriter().flush();
         resp.getWriter().close();
     }

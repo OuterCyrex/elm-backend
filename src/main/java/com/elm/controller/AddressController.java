@@ -18,9 +18,13 @@ public class AddressController {
                 case "/DeliveryAddressController/saveDeliveryAddress":
                     this.saveAddress(req, resp);
                     break;
+                case "/DeliveryAddressController/listDeliveryAddressByUserId":
+                    this.FindAddressByUserId(req, resp);
+                    break;
             }
         } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -38,6 +42,15 @@ public class AddressController {
         int rows = addressService.addAddress(da);
 
         resp.getWriter().write(String.valueOf(rows));
+        resp.getWriter().flush();
+        resp.getWriter().close();
+    }
+
+    private void FindAddressByUserId(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/plain;charset=UTF-8");
+
+        resp.getWriter().write(mapper.writeValueAsString(addressService.AddressList(req.getParameter("userId"))));
         resp.getWriter().flush();
         resp.getWriter().close();
     }

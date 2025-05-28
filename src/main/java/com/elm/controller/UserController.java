@@ -30,6 +30,7 @@ public class UserController {
             }
         } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+            e.printStackTrace();
         }
     }
 

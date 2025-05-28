@@ -1,26 +1,37 @@
 package com.elm.model.entity;
 
+import java.util.List;
+
 public class Order {
     private Integer orderId;
     private String userId;
     private Integer businessId;
     private String orderDate;
-
-    public Order() {}
-
-    public Order(Integer orderId, String userId, Integer businessId, String orderDate, Double orderTotal, Integer orderState, Integer daId) {
-        this.orderId = orderId;
-        this.userId = userId;
-        this.businessId = businessId;
-        this.orderDate = orderDate;
-        this.orderTotal = orderTotal;
-        this.orderState = orderState;
-        this.daId = daId;
-    }
-
     private Double orderTotal;
     private Integer daId;
     private Integer orderState;
+
+    private Business business;
+    private List<OrderDetail> list;
+
+
+    public Order() {}
+
+    public Business getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(Business business) {
+        this.business = business;
+    }
+
+    public List<OrderDetail> getList() {
+        return list;
+    }
+
+    public void setList(List<OrderDetail> list) {
+        this.list = list;
+    }
 
     public Integer getOrderId() {
         return orderId;
