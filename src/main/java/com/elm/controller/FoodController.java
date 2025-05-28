@@ -1,8 +1,6 @@
 package com.elm.controller;
 
-import com.elm.dao.FoodDao;
 import com.elm.service.FoodService;
-import com.elm.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
