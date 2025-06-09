@@ -1,91 +1,51 @@
 package com.elm.dao;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.elm.model.entity.Cart;
 import com.elm.model.entity.Food;
-import com.elm.utils.DBUtil;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.jdbc.SQL;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class CartDao {
+import java.util.List;
 
-    /**
-     * 添加购物车记录
-     */
-    public int addCart(Cart cart) throws SQLException {
-        String sql = "INSERT INTO cart (foodId, businessId, userId, quantity) VALUES (?, ?, ?, ?)";
-        Connection conn = DBUtil.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+@Mapper
+public interface CartDao {
 
-        pstmt.setInt(1, cart.getFoodId());
-        pstmt.setInt(2, cart.getBusinessId());
-        pstmt.setString(3, cart.getUserId());
-        pstmt.setInt(4, cart.getQuantity());
+    @Insert("INSERT INTO cart (foodId, businessId, userId, quantity) VALUES (#{foodId}, #{businessId}, #{userId}, #{quantity})")
+    int addCart(Cart cart);
 
-        int rowsAffected = pstmt.executeUpdate();
+    @SelectProvider(type = CartSqlProvider.class, method = "findCart")
+    List<Cart> findCart(Cart cart);
 
-        conn.close();
-        return rowsAffected;
-    }
+    @Delete("DELETE FROM cart WHERE businessId = #{businessId} AND userId = #{userId} AND foodId = #{foodId}")
+    int deleteCart(Cart cart);
 
-    /**
-     * 查询购物车记录
-     */
-    public List<Cart> findCart(Cart cart) throws SQLException {
-        List<Cart> cartList = new ArrayList<>();
+    @Update("UPDATE cart SET quantity = #{quantity} WHERE businessId = #{businessId} AND userId = #{userId} AND foodId = #{foodId}")
+    int updateCart(Cart cart);
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM cart WHERE 1=1");
-        List<Object> params = new ArrayList<>();
+    class CartSqlProvider {
+        public String findCart(Cart c) {
+            return new SQL() {{
+                SELECT("*");
+                FROM("cart");
 
-        if (cart.getCartId() != null) {
-            sql.append(" AND cartId = ?");
-            params.add(cart.getCartId());
-        }
-        if (cart.getFoodId() != null) {
-            sql.append(" AND foodId = ?");
-            params.add(cart.getFoodId());
-        }
-        if (cart.getBusinessId() != null) {
-            sql.append(" AND businessId = ?");
-            params.add(cart.getBusinessId());
-        }
-        if (cart.getUserId() != null && !cart.getUserId().isEmpty()) {
-            sql.append(" AND userId = ?");
-            params.add(cart.getUserId());
-        }
-        if (cart.getQuantity() != null) {
-            sql.append(" AND quantity = ?");
-            params.add(cart.getQuantity());
-        }
-
-        try (
-                Connection conn = DBUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql.toString())
-        ) {
-            for (int i = 0; i < params.size(); i++) {
-                pstmt.setObject(i + 1, params.get(i));
-            }
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Cart c = new Cart();
-                    c.setCartId(rs.getInt("cartId"));
-                    c.setFoodId(rs.getInt("foodId"));
-                    c.setBusinessId(rs.getInt("businessId"));
-                    c.setUserId(rs.getString("userId"));
-                    c.setQuantity(rs.getInt("quantity"));
-                    cartList.add(c);
-
-                    Food cr = new Food();
-                    cr.setFoodId(rs.getInt("foodId"));
-                    Food food = new FoodDao().FindFood(cr).get(0);
-
-                    c.setFood(food);
+                if (c.getCartId() != null) {
+                    WHERE("cartId = #{cartId}");
                 }
-            }
+                if (c.getFoodId() != null) {
+                    WHERE("foodId = #{foodId}");
+                }
+                if (c.getBusinessId() != null) {
+                    WHERE("businessId = #{businessId}");
+                }
+                if (c.getUserId() != null && !c.getUserId().isEmpty()) {
+                    WHERE("userId = #{userId}");
+                }
+                if (c.getQuantity() != null) {
+                    WHERE("quantity = #{quantity}");
+                }
+            }}.toString();
         }
-
-        return cartList;
     }
 }
+

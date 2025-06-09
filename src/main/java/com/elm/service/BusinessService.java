@@ -3,13 +3,17 @@ package com.elm.service;
 import com.elm.dao.BusinessDao;
 import com.elm.model.entity.Business;
 import com.elm.model.vo.BusinessResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BusinessService {
-    private static final BusinessDao businessDao = new BusinessDao();
+    @Autowired
+    private BusinessDao businessDao;
 
     private BusinessResponse EntityToResponse(Business b) {
         return new BusinessResponse(
@@ -28,7 +32,7 @@ public class BusinessService {
     public List<BusinessResponse> GetBusinessByOrderTypeId(int orderTypeId) throws SQLException {
         Business b = new Business();
         b.setOrderTypeId(orderTypeId);
-        List<Business> EntityList = businessDao.FindBusiness(b);
+        List<Business> EntityList = businessDao.findBusiness(b);
 
         List<BusinessResponse> ResponseList = new ArrayList<>();
 
@@ -42,7 +46,7 @@ public class BusinessService {
     public BusinessResponse GetBusinessById(int id) throws SQLException {
         Business b = new Business();
         b.setBusinessId(id);
-        List<Business> entityList = businessDao.FindBusiness(b);
+        List<Business> entityList = businessDao.findBusiness(b);
 
         return EntityToResponse(entityList.get(0));
     }

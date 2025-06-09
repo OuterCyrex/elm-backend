@@ -4,7 +4,7 @@ public class SaveUserRequest {
     private String userId;
     private String password;
     private String userName;
-    private short userSex;
+    private Integer userSex;
 
     public String getUserName() {
         return userName;
@@ -30,18 +30,18 @@ public class SaveUserRequest {
         this.password = password;
     }
 
-    public short getUserSex() {
+    public Integer getUserSex() {
         return userSex;
     }
 
-    public void setUserSex(short userSex) {
+    public void setUserSex(int userSex) {
         this.userSex = userSex;
     }
 
     public SaveUserRequest() {
     }
 
-    public SaveUserRequest(String userId, String password, String userName, short userSex) {
+    public SaveUserRequest(String userId, String password, String userName, Integer userSex) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;

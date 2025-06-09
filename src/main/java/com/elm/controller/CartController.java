@@ -1,55 +1,64 @@
 package com.elm.controller;
 
 import com.elm.model.dto.cart.NewCartRequest;
+import com.elm.model.entity.Cart;
 import com.elm.service.CartService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.List;
 
+@RestController
+@RequestMapping("/elm/CartController")
 public class CartController {
-    CartService cartService = new CartService();
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private CartService cartService;
 
-    public void handle(String route, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            switch (route) {
-                case "/CartController/saveCart":
-                    this.saveCart(req, resp);
-                    break;
-                case "/CartController/listCart":
-                    this.FindCart(req, resp);
-                    break;
-            }
-        } catch (Exception e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-            e.printStackTrace();
-        }
-    }
-
-    private void saveCart(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/plain;charset=UTF-8");
-
+    @PostMapping("/saveCart")
+    private int saveCart(@RequestParam String userId,
+                          @RequestParam Integer foodId,
+                          @RequestParam Integer businessId
+    ) throws Exception {
         NewCartRequest c = new NewCartRequest();
-        c.setUserId(req.getParameter("userId"));
-        c.setFoodId(Integer.parseInt(req.getParameter("foodId")));
-        c.setBusinessId(Integer.parseInt(req.getParameter("businessId")));
+        c.setUserId(userId);
+        c.setFoodId(foodId);
+        c.setBusinessId(businessId);
 
-        int rows = cartService.addCart(c);
-
-        resp.getWriter().write(String.valueOf(rows));
-        resp.getWriter().flush();
-        resp.getWriter().close();
+        return cartService.addCart(c);
     }
 
-    public void FindCart(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/plain;charset=UTF-8");
+    @PostMapping("/listCart")
+    public List<Cart> ListCart(@RequestParam String userId) throws Exception {
+        return cartService.CartList(userId);
+    }
 
-        resp.getWriter().write(mapper.writeValueAsString(cartService.CartList(req.getParameter("userId"))));
-        resp.getWriter().flush();
-        resp.getWriter().close();
+    @PostMapping("/removeCart")
+    public int RemoveCart(
+            @RequestParam String userId,
+            @RequestParam Integer businessId,
+            @RequestParam Integer foodId
+    ) throws Exception {
+        Cart c = new Cart();
+        c.setUserId(userId);
+        c.setBusinessId(businessId);
+        c.setFoodId(foodId);
+
+        return cartService.RemoveCart(c);
+    }
+
+    @PostMapping("/updateCart")
+    public int UpdateCart(
+            @RequestParam Integer quantity,
+            @RequestParam String userId,
+            @RequestParam Integer businessId,
+            @RequestParam Integer foodId
+    ) throws Exception {
+        Cart c = new Cart();
+        c.setUserId(userId);
+        c.setBusinessId(businessId);
+        c.setFoodId(foodId);
+        c.setQuantity(quantity);
+
+        return cartService.UpdateCart(c);
     }
 }

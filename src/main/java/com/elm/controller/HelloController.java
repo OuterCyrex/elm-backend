@@ -1,24 +1,31 @@
 package com.elm.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.bind.annotation.*;
 
-public class HelloController extends HttpServlet {
-    public void handle(HttpServletRequest req, HttpServletResponse resp) {
-        try {
-            this.doGet(req, resp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+@RestController
+@RequestMapping("/elm/HelloController")
+public class HelloController {
+
+    @RequestMapping("/hello")
+    public String hello() {
+        return "Hello, World!";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        resp.setContentType("text/plain;charset=utf-8");
-        resp.getWriter().write("Hello World");
+    @GetMapping("/greet")
+    public String greet(@RequestParam(name = "name", defaultValue = "World") String name) {
+        return "Hello, " + name + "!";
+    }
+
+    @PostMapping("/submit")
+    public String submit(@RequestParam("message") String message) {
+        return "You submitted: " + message;
+    }
+
+    @GetMapping("/user/{id}")
+    public String getUserById(@PathVariable String id) {
+        return "User ID: " + id;
     }
 }
+
+
+

@@ -1,92 +1,25 @@
 package com.elm.dao;
 
 import com.elm.model.entity.User;
-import com.elm.utils.DBUtil;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import org.apache.ibatis.annotations.*;
 
-public class UserDao {
+@Mapper
+public interface UserDao {
 
-    /**
-     * NewUser 返回RowsAffected
-     */
-    public int NewUser(User user) throws SQLException {
-        String sql = "INSERT INTO user (userId, password, userName, userSex, userImg, delTag) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection conn;
-        PreparedStatement pstmt;
+    @Insert("INSERT INTO user (userId, password, userName, userSex, userImg, delTag) " +
+            "VALUES (#{userId}, #{password}, #{userName}, #{userSex}, #{userImg}, #{delTag})")
+    int insertUser(User user);
 
-        conn = DBUtil.getConnection();
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, user.getUserId());
-        pstmt.setString(2, user.getPassword());
-        pstmt.setString(3, user.getUserName());
-        pstmt.setInt(4, user.getUserSex());
-        pstmt.setString(5, user.getUserImg());
-        pstmt.setInt(6, user.getDelTag());
-
-        int rowsAffected = pstmt.executeUpdate();
-        conn.close();
-
-        return rowsAffected;
-    }
-
-    public List<User> findUser(User user) throws SQLException {
-        List<User> userList = new ArrayList<>();
-
-        StringBuilder sql = new StringBuilder("SELECT * FROM user WHERE 1=1");
-        List<Object> params = new ArrayList<>();
-
-        if (user.getUserId() != null && !user.getUserId().isEmpty()) {
-            sql.append(" AND userId = ?");
-            params.add(user.getUserId());
-        }
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            sql.append(" AND password = ?");
-            params.add(user.getPassword());
-        }
-        if (user.getUserName() != null && !user.getUserName().isEmpty()) {
-            sql.append(" AND userName = ?");
-            params.add(user.getUserName());
-        }
-        if (user.getUserSex() != null) {
-            sql.append(" AND userSex = ?");
-            params.add(user.getUserSex());
-        }
-        if (user.getUserImg() != null && !user.getUserImg().isEmpty()) {
-            sql.append(" AND userImg = ?");
-            params.add(user.getUserImg());
-        }
-
-        sql.append(" AND delTag = 0");
-
-        try (
-                Connection conn = DBUtil.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql.toString())
-        ) {
-            for (int i = 0; i < params.size(); i++) {
-                pstmt.setObject(i + 1, params.get(i));
-            }
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    User u = new User(
-                            rs.getString("userId"),
-                            rs.getString("password"),
-                            rs.getString("userName"),
-                            rs.getString("userImg"),
-                            rs.getInt("userSex"),
-                            rs.getInt("delTag")
-                    );
-                    userList.add(u);
-                }
-            }
-        }
-
-        return userList;
-    }
+    @Select({
+            "<script>",
+            "SELECT * FROM user WHERE delTag = 0",
+            "<if test='userId != null and userId != \"\"'>AND userId = #{userId}</if>",
+            "<if test='password != null and password != \"\"'>AND password = #{password}</if>",
+            "<if test='userName != null and userName != \"\"'>AND userName = #{userName}</if>",
+            "<if test='userSex != null'>AND userSex = #{userSex}</if>",
+            "<if test='userImg != null and userImg != \"\"'>AND userImg = #{userImg}</if>",
+            "</script>"
+    })
+    List<User> findUser(User user);
 }

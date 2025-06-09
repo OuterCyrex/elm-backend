@@ -6,18 +6,22 @@ import com.elm.model.dto.user.SaveUserRequest;
 import com.elm.model.dto.user.UserLoginRequest;
 import com.elm.model.entity.User;
 import com.elm.model.vo.UserResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 
+@Service
 public class UserService {
-    private static final UserDao userDao = new UserDao();
+    @Autowired
+    private UserDao userDao;
 
     private UserResponse EntityToResponse(User user) {
         return new UserResponse(user);
     }
 
     public int saveUser(SaveUserRequest in) throws SQLException{
-        return userDao.NewUser(new User(in.getUserId(), in.getPassword(), in.getUserName(), "", in.getUserSex(), (short) 0));
+        return userDao.insertUser(new User(in.getUserId(), in.getPassword(), in.getUserName(), "", in.getUserSex(), (short) 0));
     }
 
     public int GetUserById(GetUserRequest in) throws SQLException{

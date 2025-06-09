@@ -1,75 +1,46 @@
 package com.elm.dao;
 
 import com.elm.model.entity.Food;
-import com.elm.utils.DBUtil;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.jdbc.SQL;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class FoodDao {
+@Mapper
+public interface FoodDao {
 
-    public List<Food> FindFood(Food criteria) throws SQLException {
-        Connection conn = DBUtil.getConnection();
+    @SelectProvider(type = FoodSqlProvider.class, method = "findFood")
+    List<Food> findFood(Food criteria);
 
-        List<Food> result = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM food WHERE 1=1");
-        List<Object> params = new ArrayList<>();
+    class FoodSqlProvider {
+        public String findFood(Food f) {
+            return new SQL() {{
+                SELECT("*");
+                FROM("food");
 
-        if (criteria.getFoodId() != null) {
-            sql.append(" AND foodId = ?");
-            params.add(criteria.getFoodId());
+                if (f.getFoodId() != null) {
+                    WHERE("foodId = #{foodId}");
+                }
+                if (f.getFoodName() != null && !f.getFoodName().isEmpty()) {
+                    WHERE("foodName LIKE CONCAT('%', #{foodName}, '%')");
+                }
+                if (f.getFoodExplain() != null && !f.getFoodExplain().isEmpty()) {
+                    WHERE("foodExplain LIKE CONCAT('%', #{foodExplain}, '%')");
+                }
+                if (f.getFoodImg() != null && !f.getFoodImg().isEmpty()) {
+                    WHERE("foodImg = #{foodImg}");
+                }
+                if (f.getFoodPrice() != null) {
+                    WHERE("foodPrice = #{foodPrice}");
+                }
+                if (f.getBusinessId() != null) {
+                    WHERE("businessId = #{businessId}");
+                }
+                if (f.getRemarks() != null && !f.getRemarks().isEmpty()) {
+                    WHERE("remarks LIKE CONCAT('%', #{remarks}, '%')");
+                }
+            }}.toString();
         }
-        if (criteria.getFoodName() != null && !criteria.getFoodName().isEmpty()) {
-            sql.append(" AND foodName LIKE ?");
-            params.add("%" + criteria.getFoodName() + "%");
-        }
-        if (criteria.getFoodExplain() != null && !criteria.getFoodExplain().isEmpty()) {
-            sql.append(" AND foodExplain LIKE ?");
-            params.add("%" + criteria.getFoodExplain() + "%");
-        }
-        if (criteria.getFoodImg() != null && !criteria.getFoodImg().isEmpty()) {
-            sql.append(" AND foodImg = ?");
-            params.add(criteria.getFoodImg());
-        }
-        if (criteria.getFoodPrice() != null) {
-            sql.append(" AND foodPrice = ?");
-            params.add(criteria.getFoodPrice());
-        }
-        if (criteria.getBusinessId() != null) {
-            sql.append(" AND businessId = ?");
-            params.add(criteria.getBusinessId());
-        }
-        if (criteria.getRemarks() != null && !criteria.getRemarks().isEmpty()) {
-            sql.append(" AND remarks LIKE ?");
-            params.add("%" + criteria.getRemarks() + "%");
-        }
-
-        PreparedStatement ps = conn.prepareStatement(sql.toString());
-
-        for (int i = 0; i < params.size(); i++) {
-            ps.setObject(i + 1, params.get(i));
-        }
-
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            Food food = new Food();
-            food.setFoodId(rs.getInt("foodId"));
-            food.setFoodName(rs.getString("foodName"));
-            food.setFoodExplain(rs.getString("foodExplain"));
-            food.setFoodImg(rs.getString("foodImg"));
-            food.setFoodPrice(rs.getDouble("foodPrice"));
-            food.setBusinessId(rs.getInt("businessId"));
-            food.setRemarks(rs.getString("remarks"));
-
-            result.add(food);
-        }
-
-        conn.close();
-        return result;
     }
 }
 

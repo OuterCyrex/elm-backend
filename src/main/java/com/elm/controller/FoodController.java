@@ -1,42 +1,21 @@
 package com.elm.controller;
 
+import com.elm.model.vo.FoodResponse;
 import com.elm.service.FoodService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.List;
 
+@RestController
+@RequestMapping("/elm/FoodController")
 public class FoodController {
-    FoodService foodService = new FoodService();
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private FoodService foodService;
 
-
-    public void handle(String route, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            switch (route) {
-                case "/UserController/test":
-                    this.Test(req, resp);
-                case "/FoodController/listFoodByBusinessId":
-                    this.GetFoodByBusinessId(req, resp);
-            }
-        } catch (Exception e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
-            e.printStackTrace();
-        }
-    }
-
-    private void Test(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/plain;charset=UTF-8");
-        resp.getWriter().write("BusinessController");
-    }
-
-    private void GetFoodByBusinessId(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/plain;charset=UTF-8");
-        resp.getWriter().write(mapper.writeValueAsString(foodService.FindFood(Integer.parseInt(req.getParameter("businessId")))));
-        resp.getWriter().flush();
-        resp.getWriter().close();
+    @PostMapping("/listFoodByBusinessId")
+    private List<FoodResponse> ListFoodByBusinessId(@RequestParam Integer businessId) throws Exception {
+        return foodService.FindFood(businessId);
     }
 }

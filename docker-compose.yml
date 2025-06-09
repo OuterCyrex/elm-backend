@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    container_name: springboot-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/elm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: "C:/Users/Administrator/Desktop/SWPU/Java作业/JavaEE/实验二/饿了么网站开发材料/前端Vue工程/elmclient"
+      dockerfile: Dockerfile
+    container_name: vue-app
+    ports:
+      - "8081:8081"
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: elm
+    volumes:
+      - db_data:/var/lib/mysql
+      - "C:/Users/Administrator/Desktop/SWPU/Java作业/JavaEE/实验二/饿了么网站开发材料/数据库脚本:/docker-entrypoint-initdb.d"
+
+volumes:
+  db_data:

@@ -10,6 +10,14 @@ public class NewAddressRequest {
     public NewAddressRequest() {
     }
 
+    public NewAddressRequest(String contactName, Integer contactSex, String contactTel, String address, String userId) {
+        this.contactName = contactName;
+        this.contactSex = contactSex;
+        this.contactTel = contactTel;
+        this.address = address;
+        this.userId = userId;
+    }
+
     public String getContactName() {
         return contactName;
     }
